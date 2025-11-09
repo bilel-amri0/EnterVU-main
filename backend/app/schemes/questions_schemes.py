@@ -1,0 +1,52 @@
+from pydantic import BaseModel, Field, validator
+from typing import Optional, List, Literal
+from .answers_schemes import AnswerOut
+from app.models.enums.QuestionEnums import QuestionType
+
+
+
+class QuestionCreate(BaseModel):
+
+    content: str
+    max_score: int = Field(..., ge=0, le=10, description="Score must be between 0 and 10")
+    type: Literal["BEHAVIORAL", "TECHNICAL", "SITUATIONAL", "BEHAVIOURAL"]
+    topics: List[str] = Field(..., description="All topics must be in lower case")
+    
+    @validator('topics', each_item=True, pre=True)
+    def convert_topics_to_lowercase(cls, v):
+        if isinstance(v, str):
+            return v.strip().lower()
+        return v
+    
+    @validator("topics",pre=True)
+    def extract_topic_names(cls, v):
+        if isinstance(v, list):
+            if v and hasattr(v[0], 'name'):
+                return [topic.name for topic in v]
+            elif v and isinstance(v[0], str):
+                return v
+        return v
+    
+    @validator('type', pre=True)
+    def convert_types_to_uppercase(cls, v):
+        if isinstance(v, str):
+            return v.strip().upper()
+        return v
+
+class QuestionOut(QuestionCreate):
+
+    id: int
+    answer: Optional[AnswerOut] = None
+    order: int
+
+    class Config:
+        from_attributes = True
+
+class NextQuestionResponse(BaseModel):
+
+    question: QuestionOut
+    total_questions: int
+
+
+class QuestionOutAgent(BaseModel):
+    questions: List[QuestionCreate]
