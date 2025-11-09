@@ -7,6 +7,8 @@
 ---
 An **AI-powered Interview Preparation & Evaluation System** that helps candidates practice job interviews. Users can upload their CV and specify a job title, then the system generates interview questions, evaluates answers, and provides a detailed feedback report.
 
+> 📘 **For a comprehensive technical overview, architecture details, and in-depth documentation, see [PROJECT_DESCRIPTION.md](./PROJECT_DESCRIPTION.md)**
+
 -----
 
 ## Features
